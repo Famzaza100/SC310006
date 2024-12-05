@@ -1,97 +1,123 @@
 <!DOCTYPE html>
-<html>
+<html lang="th">
 <head>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/vuetify@3.7.4/dist/vuetify.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/vuetify@3.7.4/dist/vuetify.min.js"></script>
-    <title>Online Quiz</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>แบบทดสอบออนไลน์</title>
+  <script src="https://unpkg.com/vue@3"></script>
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@3.7.4/dist/vuetify.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@3.7.4/dist/vuetify.min.js"></script>
 </head>
 <body>
-    <div id="app">
-        <v-app>
-            <v-main>
-                <v-container>
-                    <div v-if="step === 'start'">
-                        <h1>Welcome to the Quiz</h1>
-                        <p>Test your knowledge with our 20-question multiple-choice quiz!</p>
-                        <v-btn @click="startQuiz" color="primary">Start Quiz</v-btn>
-                    </div>
-                    <div v-else-if="step === 'quiz'">
-                        <h2>Question {{ currentIndex + 1 }} of {{ questions.length }}</h2>
-                        <p>{{ currentQuestion.question }}</p>
-                        <v-radio-group v-model="userAnswers[currentIndex]" :key="currentIndex">
-                            <v-radio v-for="(choice, index) in currentQuestion.choices" :key="index" :value="choice">
-                                {{ choice }}
-                            </v-radio>
-                        </v-radio-group>
-                        <v-btn v-if="currentIndex > 0" @click="prevQuestion" color="secondary">Previous</v-btn>
-                        <v-btn v-if="currentIndex < questions.length - 1" @click="nextQuestion" color="primary">Next</v-btn>
-                        <v-btn v-if="currentIndex === questions.length - 1" @click="submitQuiz" color="success">Submit</v-btn>
-                    </div>
-                    <div v-else-if="step === 'result'">
-                        <h1>Quiz Results</h1>
-                        <p>You scored {{ score }} out of {{ questions.length }}</p>
-                        <v-btn @click="resetQuiz" color="primary">Retry</v-btn>
-                    </div>
-                </v-container>
-            </v-main>
-        </v-app>
-    </div>
+  <div id="app">
+    <v-app>
+      <v-container>
+        <!-- หน้าเริ่มต้น -->
+        <v-card v-if="!started" class="pa-5 text-center">
+          <h1>แบบทดสอบออนไลน์</h1>
+          <p>ตอบคำถามทั้งหมด 20 ข้อ แล้วกดตรวจคำตอบ</p>
+          <v-btn color="primary" @click="startQuiz">เริ่มทำแบบทดสอบ</v-btn>
+        </v-card>
 
-    <script>
-        const { createApp } = Vue;
-        const { createVuetify } = Vuetify;
+        <!-- แบบทดสอบ -->
+        <v-card v-else class="pa-5">
+          <h2>คำถามที่ {{ currentIndex + 1 }}/{{ questions.length }}</h2>
+          <p>{{ questions[currentIndex].text }}</p>
+          <v-radio-group v-model="answers[currentIndex]" class="mt-3">
+            <v-radio
+              v-for="(option, index) in questions[currentIndex].options"
+              :key="index"
+              :label="option"
+              :value="option"
+            ></v-radio>
+          </v-radio-group>
 
-        const vuetify = createVuetify();
+          <v-btn
+            v-if="currentIndex < questions.length - 1"
+            color="primary"
+            @click="nextQuestion"
+            class="mt-5"
+          >
+            ถัดไป
+          </v-btn>
+          <v-btn
+            v-else
+            color="success"
+            @click="checkAnswers"
+            class="mt-5"
+          >
+            ตรวจคำตอบ
+          </v-btn>
+        </v-card>
 
-        createApp({
-            data() {
-                return {
-                    step: 'start',
-                    questions: [],
-                    currentIndex: 0,
-                    userAnswers: [],
-                    score: 0
-                };
-            },
-            computed: {
-                currentQuestion() {
-                    return this.questions[this.currentIndex];
-                }
-            },
-            methods: {
-                async startQuiz() {
-                    // Load questions from JSON
-                    const response = await fetch('quiz2.json');
-                    this.questions = await response.json();
-                    this.userAnswers = new Array(this.questions.length).fill(null);
-                    this.step = 'quiz';
-                },
-                nextQuestion() {
-                    if (this.currentIndex < this.questions.length - 1) {
-                        this.currentIndex++;
-                    }
-                },
-                prevQuestion() {
-                    if (this.currentIndex > 0) {
-                        this.currentIndex--;
-                    }
-                },
-                submitQuiz() {
-                    this.score = this.questions.reduce((score, question, index) => {
-                        return score + (this.userAnswers[index] === question.answer ? 1 : 0);
-                    }, 0);
-                    this.step = 'result';
-                },
-                resetQuiz() {
-                    this.step = 'start';
-                    this.currentIndex = 0;
-                    this.userAnswers = [];
-                    this.score = 0;
-                }
-            }
-        }).use(vuetify).mount('#app');
-    </script>
+        <!-- แสดงคะแนน -->
+        <v-dialog v-model="dialog" max-width="400">
+          <v-card>
+            <v-card-title class="text-center">ผลคะแนน</v-card-title>
+            <v-card-text>
+              คุณได้คะแนน {{ score }}/{{ questions.length }}
+            </v-card-text>
+            <v-card-actions class="justify-center">
+              <v-btn color="primary" @click="resetQuiz">เริ่มใหม่</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </v-container>
+    </v-app>
+  </div>
+
+  <script>
+    const { createApp } = Vue;
+    const { createVuetify } = Vuetify;
+
+    const vuetify = createVuetify();
+
+    createApp({
+      data() {
+        return {
+          started: false,
+          questions: [],
+          currentIndex: 0,
+          answers: [],
+          dialog: false,
+          score: 0,
+        };
+      },
+      methods: {
+        async fetchQuestions() {
+          const response = await fetch("quiz2.json");
+          this.questions = await response.json();
+          this.answers = Array(this.questions.length).fill(null);
+        },
+        startQuiz() {
+          this.started = true;
+        },
+        nextQuestion() {
+          if (this.currentIndex < this.questions.length - 1) {
+            this.currentIndex++;
+          }
+        },
+        checkAnswers() {
+          this.score = this.answers.reduce((sum, answer, index) => {
+            return sum + (answer === this.questions[index].correct ? 1 : 0);
+          }, 0);
+          this.dialog = true;
+        },
+        resetQuiz() {
+          this.started = false;
+          this.currentIndex = 0;
+          this.answers = Array(this.questions.length).fill(null);
+          this.score = 0;
+          this.dialog = false;
+        },
+      },
+      mounted() {
+        this.fetchQuestions();
+      },
+    })
+      .use(vuetify)
+      .mount("#app");
+  </script>
 </body>
 </html>
