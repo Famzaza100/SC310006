@@ -63,7 +63,7 @@
             methods: {
                 async startQuiz() {
                     // Load questions from JSON
-                    const response = await fetch('questions.json');
+                    const response = await fetch('quiz2.json');
                     this.questions = await response.json();
                     this.userAnswers = new Array(this.questions.length).fill(null);
                     this.step = 'quiz';
