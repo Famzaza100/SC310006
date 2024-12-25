@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Quiz</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+
+<body>
+    <div id="app" class="container mt-4"></div>
+
+    <script type="text/babel">
+        class QuizApp extends React.Component {
+            constructor(props) {
+                super(props);
+                this.state = {
+                    quizData: null,
+                    selectedSubject: "",
+                    selectedQuiz: null,
+                    answers: [],
+                    score: null
+                };
+            }
+
+            componentDidMount() {
+                // โหลดข้อมูล JSON
+                fetch("quiz3.json")
+                    .then(response => response.json())
+                    .then(data => this.setState({ quizData: data }));
+            }
+
+            handleStart = (subject) => {
+                this.setState({
+                    selectedSubject: subject,
+                    selectedQuiz: this.state.quizData[subject],
+                    answers: [],
+                    score: null
+                });
+            };
+
+            handleAnswer = (index, answer) => {
+                const updatedAnswers = [...this.state.answers];
+                updatedAnswers[index] = answer;
+                this.setState({ answers: updatedAnswers });
+            };
+
+            calculateScore = () => {
+                const { selectedQuiz, answers } = this.state;
+                let score = 0;
+                selectedQuiz.forEach((q, index) => {
+                    if (answers[index] === q.correct) score++;
+                });
+                this.setState({ score });
+            };
+
+            render() {
+                const { quizData, selectedSubject, selectedQuiz, answers, score } = this.state;
+
+                if (!quizData) {
+                    return <div>Loading...</div>;
+                }
+
+                return (
+                    <div className="card">
+                        <div className="card-header">
+                            <h3>แบบทดสอบออนไลน์</h3>
+                        </div>
+                        <div className="card-body">
+                            {!selectedSubject ? (
+                                <div>
+                                    <h4>ยินดีต้อนรับสู่แบบทดสอบออนไลน์</h4>
+                                    <p>
+                                        แบบทดสอบนี้ถูกออกแบบมาเพื่อทดสอบความรู้ในหลากหลายวิชา เช่น
+                                        คณิตศาสตร์และภาษาอังกฤษ
+                                    </p>
+                                    <p>วิธีการทำแบบทดสอบ</p>
+                                    <ol>
+                                        <li>เลือกวิชาที่คุณต้องการทำแบบทดสอบ</li>
+                                        <li>ตอบคำถามทั้งหมดในแบบทดสอบ</li>
+                                        <li>เมื่อทำเสร็จ ให้กดปุ่ม "ตรวจคำตอบ" เพื่อดูคะแนน</li>
+                                    </ol>
+                                    <p>เมื่อคุณพร้อมแล้ว คลิกปุ่มเลือกวิชาเพื่อเริ่มต้น!</p>
+                                    {Object.keys(quizData).map(subject => (
+                                        <button key={subject} className="btn btn-primary m-2" onClick={() => this.handleStart(subject)}>
+                                            {subject}
+                                        </button>
+                                    ))}
+                                </div>
+                            ) : score === null ? (
+                                <div>
+                                    {selectedQuiz.map((q, index) => (
+                                        <div key={index} className="mb-4">
+                                            <p><b>ข้อ {index + 1}:</b> {q.question}</p>
+                                            {q.options.map((option, i) => (
+                                                <div key={i}>
+                                                    <input
+                                                        type="radio"
+                                                        name={`question-${index}`}
+                                                        id={`question-${index}-option-${i}`}
+                                                        checked={answers[index] === i}
+                                                        onChange={() => this.handleAnswer(index, i)}
+                                                    />
+                                                    <label className="ms-2" htmlFor={`question-${index}-option-${i}`}>
+                                                        {option}
+                                                    </label>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ))}
+                                    <button className="btn btn-success" onClick={this.calculateScore}>
+                                        ตรวจคำตอบ
+                                    </button>
+                                </div>
+                            ) : (
+                                <div>
+                                    <h4>คะแนนของคุณ: {score} / {selectedQuiz.length}</h4>
+                                    <button className="btn btn-secondary" onClick={() => this.setState({ selectedSubject: "", selectedQuiz: null, answers: [], score: null })}>
+                                        ทำใหม่
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                        <div className="card-footer">
+                            <p>พัฒนาโดย นายณดล มูลตลาด 653380325-4</p>
+                        </div>
+                    </div>
+                );
+            }
+
+        }
+
+        ReactDOM.createRoot(document.getElementById("app")).render(<QuizApp />);
+    </script>
+</body>
+
+</html>

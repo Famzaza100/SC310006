@@ -1,0 +1,107 @@
+{
+    "Mathematics": [
+      {
+        "question": "What is 5 + 3?",
+        "options": ["6", "7", "8", "9"],
+        "correct": 2
+      },
+      {
+        "question": "What is 12 - 4?",
+        "options": ["6", "7", "8", "9"],
+        "correct": 2
+      },
+      {
+        "question": "What is 9 * 2?",
+        "options": ["16", "18", "20", "22"],
+        "correct": 1
+      },
+      {
+        "question": "What is 15 / 3?",
+        "options": ["4", "5", "6", "7"],
+        "correct": 1
+      },
+      {
+        "question": "What is 2^3?",
+        "options": ["6", "7", "8", "9"],
+        "correct": 2
+      },
+      {
+        "question": "What is the square root of 49?",
+        "options": ["6", "7", "8", "9"],
+        "correct": 1
+      },
+      {
+        "question": "What is 10% of 200?",
+        "options": ["10", "20", "30", "40"],
+        "correct": 1
+      },
+      {
+        "question": "Solve: 3x + 5 = 11, find x.",
+        "options": ["1", "2", "3", "4"],
+        "correct": 1
+      },
+      {
+        "question": "What is the value of π (approx)?",
+        "options": ["3.12", "3.14", "3.16", "3.18"],
+        "correct": 1
+      },
+      {
+        "question": "What is the result of 50 ÷ 5?",
+        "options": ["8", "9", "10", "11"],
+        "correct": 2
+      }
+    ],
+    "English": [
+      {
+        "question": "What is the synonym of 'quick'?",
+        "options": ["Slow", "Fast", "Lazy", "Weak"],
+        "correct": 1
+      },
+      {
+        "question": "What is the antonym of 'strong'?",
+        "options": ["Weak", "Tough", "Hard", "Firm"],
+        "correct": 0
+      },
+      {
+        "question": "Choose the correct spelling:",
+        "options": ["Accommodate", "Acomodate", "Acomoddate", "Acommodate"],
+        "correct": 0
+      },
+      {
+        "question": "What is the plural of 'mouse'?",
+        "options": ["Mouses", "Mice", "Mouse", "Mices"],
+        "correct": 1
+      },
+      {
+        "question": "What is the opposite of 'happy'?",
+        "options": ["Joyful", "Excited", "Sad", "Glad"],
+        "correct": 2
+      },
+      {
+        "question": "What is a synonym for 'beautiful'?",
+        "options": ["Ugly", "Attractive", "Dirty", "Plain"],
+        "correct": 1
+      },
+      {
+        "question": "What is the past tense of 'run'?",
+        "options": ["Ran", "Runned", "Runs", "Running"],
+        "correct": 0
+      },
+      {
+        "question": "Which word is a noun?",
+        "options": ["Quickly", "Jump", "Happiness", "Run"],
+        "correct": 2
+      },
+      {
+        "question": "What is the meaning of 'antonym'?",
+        "options": ["Opposite meaning", "Same meaning", "Definition", "Usage"],
+        "correct": 0
+      },
+      {
+        "question": "What is the correct article for 'hour'?",
+        "options": ["A", "An", "The", "None"],
+        "correct": 1
+      }
+    ]
+  }
+  
