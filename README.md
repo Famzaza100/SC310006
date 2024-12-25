@@ -1,2 +1,2 @@
 # SC310006
-https://i.pinimg.com/originals/8c/b1/45/8cb145d996896e3689c07dc0e80f5af6.gif'
+![Whistler's Mother](https://github.com/user-attachments/assets/3f575ee9-7040-4556-b7c5-69664d36488a)
