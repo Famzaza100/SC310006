@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>แนะนำตัวใน A-Frame</title>
+  <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap');
+
+    body {
+      margin: 0;
+      font-family: 'Kanit', sans-serif;
+    }
+
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 24px;
+      z-index: 9999;
+      transition: opacity 0.5s;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="loading-screen">กำลังโหลด...</div>
+
+  <a-scene>
+    <!-- Environment -->
+    <a-sky color="#ffffff" src="w4.jpg"></a-sky>
+
+    <!-- Enhanced Lighting -->
+    <a-light type="ambient" intensity="0.5"></a-light>
+    <a-light type="directional" position="5 10 5" intensity="1" castShadow="true"></a-light>
+    <a-light type="spot" position="-5 10 5" intensity="0.5" angle="45"></a-light>
+
+    <!-- Character Model with Enhanced Animation -->
+    <a-entity gltf-model="Adventurer.glb" position="0 0 -5" scale="10 10 10" animation__legMovement="property: rotation;
+                         from: -10 0 0;
+                         to: 10 0 0;
+                         dur: 500;
+                         loop: true;
+                         dir: alternate">
+    </a-entity>
+
+    <!-- Stylized Introduction Text -->
+    <a-text value="Nadon Moontarad\n653380325-4\nSec. 2" color="#ffffff" position="-3 3 -5" width="8" font="kelsonsans"
+      align="center" baseline="center"
+      animation__fade="property: opacity; from: 0; to: 1; dur: 2000; easing: easeInOutSine"
+      animation__color="property: color; from: #ffffff; to: #00fff0; dur: 4000; dir: alternate; loop: true">
+    </a-text>
+
+    <!-- Decorated Welcome Text -->
+    <a-text value="Welcome to My VR World" color="#00fff0" position="0 4 -1" width="10" align="center" baseline="center"
+      font="kelsonsans"
+      animation__scale="property: scale; dir: alternate; dur: 2000; easing: easeInOutSine; loop: true; to: 1.2 1.2 1.2"
+      animation__color="property: color; from: #00fff0; to: #ff69b4; dur: 3000; dir: alternate; loop: true">
+    </a-text>
+
+    <!-- Enhanced Decorative Models -->
+    <a-entity gltf-model="Sign.glb" position="-3 0 -5" scale="1 1 1" </a-entity>
+
+      <a-entity gltf-model="Tank.glb" position="20 0 -5" scale="5 5 5"
+        animation="property: rotation; to: 0 -360 0; loop: true; dur: 15000; easing: linear">
+      </a-entity>
+
+      <a-entity gltf-model="Tank.glb" position="20 0 15" scale="5 5 5"
+        animation="property: rotation; to: 0 -360 0; loop: true; dur: 15000; easing: linear">
+      </a-entity>
+
+      <a-entity gltf-model="Tank.glb" position="20 0 35" scale="5 5 5"
+        animation="property: rotation; to: 0 -360 0; loop: true; dur: 15000; easing: linear">
+      </a-entity>
+
+      <a-entity gltf-model="Tank.glb" position="20 0 55" scale="5 5 5"
+        animation="property: rotation; to: 0 -360 0; loop: true; dur: 15000; easing: linear">
+      </a-entity>
+
+      <a-entity gltf-model="Tree-1BkD9JnKrE.glb" position="-10 0 -10" scale="5 5 5">
+      </a-entity>
+
+      <a-entity gltf-model="Tree-1BkD9JnKrE.glb" position="-10 0 5" scale="5 5 5">
+      </a-entity>
+
+      <a-entity gltf-model="Tree-1BkD9JnKrE.glb" position="-10 0 20" scale="5 5 5">
+      </a-entity>
+
+      <a-entity gltf-model="Tree-1BkD9JnKrE.glb" position="-10 0 35" scale="5 5 5">
+      </a-entity>
+
+      <a-entity gltf-model="Tree-1BkD9JnKrE.glb" position="-10 0 50" scale="5 5 5">
+      </a-entity>
+
+      <a-entity gltf-model="Earth.glb" position="0 300 0" scale="1 1 1"
+        animation="property: rotation; to: 0 -360 0; loop: true; dur: 15000; easing: linear">
+      </a-entity>
+
+      <a-plane position="0 0 -5" rotation="-90 0 0" width="200" height="200" color="#4CAF50" shadow="receive: true">
+      </a-plane>
+
+      <a-box position="0 1 -20" src="Vladimir_Lenin.jpg" width="2" height="2" depth="2"
+        animation="property: rotation; to: 0 -360 0; loop: true; dur: 15000; easing: linear"></a-box>
+
+      <a-box position="5 1 -20" src="Joseph_Stalin,_1950_(cropped).jpg" width="2" height="2" depth="2"
+        animation="property: rotation; to: 0 -360 0; loop: true; dur: 15000; easing: linear"></a-box>
+
+      <a-box position="10 1 -20" src="Georgy_Malenkov_1964.jpg" width="2" height="2" depth="2"
+        animation="property: rotation; to: 0 -360 0; loop: true; dur: 15000; easing: linear"></a-box>
+
+      <a-box position="15 1 -20" src="100px-Nikita_Khrushchev_1962.jpg" width="2" height="2" depth="2"
+        animation="property: rotation; to: 0 -360 0; loop: true; dur: 15000; easing: linear"></a-box>
+
+      <a-box position="20 1 -20" src="Staatshoofden,_portretten,_Bestanddeelnr_925-6564.jpg" width="2" height="2"
+        depth="2" animation="property: rotation; to: 0 -360 0; loop: true; dur: 15000; easing: linear"></a-box>
+
+      <a-entity gltf-model="Soldier.glb" position="-10 0 -40" scale=".2 .2 .2">
+      </a-entity>
+
+      <a-entity gltf-model="Soldier.glb" position="-5 0 -40" scale=".2 .2 .2">
+      </a-entity>
+
+      <a-entity gltf-model="Soldier.glb" position="0 0 -40" scale=".2 .2 .2">
+      </a-entity>
+
+      <a-entity gltf-model="Soldier.glb" position="5 0 -40" scale=".2 .2 .2">
+      </a-entity>
+
+      <a-entity gltf-model="Soldier.glb" position="10 0 -40" scale=".2 .2 .2">
+      </a-entity>
+
+      <a-entity gltf-model="Soldier.glb" position="15 0 -40" scale=".2 .2 .2">
+      </a-entity>
+
+      <a-entity gltf-model="Soldier.glb" position="20 0 -40" scale=".2 .2 .2">
+      </a-entity>
+
+      <a-entity gltf-model="Soldier.glb" position="25 0 -40" scale=".2 .2 .2">
+      </a-entity>
+
+      <a-entity gltf-model="Soldier.glb" position="30 0 -40" scale=".2 .2 .2">
+      </a-entity>
+
+      <a-entity gltf-model="Soldier.glb" position="35 0 -40" scale=".2 .2 .2">
+      </a-entity>
+
+      <a-entity gltf-model="Soldier.glb" position="40 0 -40" scale=".2 .2 .2">
+      </a-entity>
+
+
+      <!-- Particle System for Visual Effects -->
+      <a-entity position="0 2.25 -5" particle-system="preset: snow; particleCount: 500; size: 0.5"></a-entity>
+  </a-scene>
+
+  <script>
+    window.addEventListener('load', function () {
+      document.querySelector('.loading-screen').style.opacity = '0';
+      setTimeout(function () {
+        document.querySelector('.loading-screen').style.display = 'none';
+      }, 500);
+    });
+  </script>
+</body>
+
+</html>
