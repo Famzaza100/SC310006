@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Work6: เรียกใช้ฐานข้อมูล Firebase ด้วย VueJS</title>
+  <!-- Google Fonts: Roboto -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet" />
+  <!-- Vuetify CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@3.4.10/dist/vuetify.min.css" rel="stylesheet" />
+  <!-- Material Design Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet" />
+  <!-- Vue 3 -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <!-- Vuetify JS -->
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@3.4.10/dist/vuetify.min.js"></script>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+      margin: 0;
+      padding: 0;
+    }
+
+    .container-custom {
+      max-width: 1200px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .v-card {
+      border-radius: 12px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <v-app>
+      <!-- Header ด้วย v-app-bar -->
+      <v-app-bar color="indigo darken-3" dark app>
+        <v-toolbar-title>{{ title }}</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <template v-if="user">
+          <v-avatar class="mr-2">
+            <v-img :src="user.photoURL"></v-img>
+          </v-avatar>
+          <div class="mr-4">
+            <div>{{ user.displayName }}</div>
+            <small>{{ user.email }}</small>
+          </div>
+          <v-btn color="red lighten-1" @click="google_logout">Logout</v-btn>
+        </template>
+        <v-btn v-else color="green lighten-1" @click="google_login">Login</v-btn>
+      </v-app-bar>
+
+      <v-main>
+        <v-container class="container-custom">
+          <v-card elevation="6">
+            <v-card-text>
+              <!-- ใช้ v-data-table แสดงข้อมูล -->
+              <v-data-table
+                :headers="headers"
+                :items="students"
+                class="elevation-1"
+                item-key="id"
+                dense
+              >
+                <template v-slot:item.actions="{ item }">
+                  <v-btn icon color="blue" @click="edit(item)">
+                    <v-icon>mdi-account-edit</v-icon>
+                  </v-btn>
+                  <v-btn icon color="red" @click="deleteData(item)">
+                    <v-icon>mdi-account-remove</v-icon>
+                  </v-btn>
+                </template>
+              </v-data-table>
+            </v-card-text>
+            <v-divider></v-divider>
+            <v-card-actions class="justify-space-between">
+              <v-btn color="indigo darken-3" @click="readData">Read Data (get)</v-btn>
+              <v-btn color="teal darken-2" @click="autoRead">Auto Read (onSnapshot)</v-btn>
+              <v-btn color="purple darken-1" @click="addData">Add Data</v-btn>
+            </v-card-actions>
+          </v-card>
+
+          <!-- Dialog สำหรับเพิ่ม/แก้ไขข้อมูล ใช้ v-model="dialog" -->
+          <v-dialog v-model="dialog" max-width="600px">
+            <v-card>
+              <v-card-title class="headline" color="indigo darken-3" dark>
+                {{ editmode }}
+              </v-card-title>
+              <v-card-text>
+                <v-form>
+                  <v-text-field v-model="editstd.id" label="รหัส" outlined dense></v-text-field>
+                  <v-combobox
+                    v-model="editstd.title"
+                    label="คำนำหน้า"
+                    :items="['นาย','นางสาว','ด.ช.','ด.ญ','นาง']"
+                    outlined dense
+                  ></v-combobox>
+                  <v-text-field v-model="editstd.fname" label="ชื่อ" outlined dense></v-text-field>
+                  <v-text-field v-model="editstd.lname" label="นามสกุล" outlined dense></v-text-field>
+                  <v-text-field v-model="editstd.email" label="E-mail" outlined dense></v-text-field>
+                  <v-text-field v-model="editstd.phone" label="โทรศัพท์" outlined dense></v-text-field>
+                </v-form>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="red lighten-1" @click="cancelEdit">Cancel</v-btn>
+                <v-btn color="green darken-1" @click="savedata">Save</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+
+          <div class="text-center pa-6">{{ footer }}</div>
+        </v-container>
+      </v-main>
+    </v-app>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCH3OsgIrf9G2ekEK_iVV8mA6JWygnGsWs",
+      authDomain: "web2568-45bb2.firebaseapp.com",
+      projectId: "web2568-45bb2",
+      storageBucket: "web2568-45bb2.firebasestorage.app",
+      messagingSenderId: "289116719055",
+      appId: "1:289116719055:web:ffe60b5194e235b58134ba",
+      measurementId: "G-VG0DW0QVDN"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const vuetify = Vuetify.createVuetify();
+    const app = Vue.createApp({
+      data() {
+        return {
+          title: "Work6: เรียกใช้ฐานข้อมูล Firebase ด้วย VueJS",
+          footer: "ระบุ รหัส ชื่อ-สกุล สาขา",
+          students: [],
+          editstd: {},
+          editmode: 0,
+          dialog: false, // property สำหรับควบคุมการแสดง Dialog
+          user: null,
+          headers: [
+            { text: "รหัส", value: "id" },
+            { text: "คำนำหน้า", value: "title" },
+            { text: "ชื่อ", value: "fname" },
+            { text: "สกุล", value: "lname" },
+            { text: "Email", value: "email" },
+            { text: "โทรศัพท์", value: "phone" },
+            { text: "Actions", value: "actions", sortable: false }
+          ]
+        };
+      },
+      mounted() {
+        firebase.auth().onAuthStateChanged((user) => {
+          this.user = user ? user.toJSON() : null;
+        });
+      },
+      methods: {
+        readData() {
+          db.collection("students").get().then((querySnapshot) => {
+            this.students = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          });
+        },
+        autoRead() {
+          db.collection("students").onSnapshot((querySnapshot) => {
+            this.students = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          });
+        },
+        edit(student) {
+          this.editstd = { ...student };
+          this.editmode = "Edit Student";
+          this.dialog = true;
+        },
+        savedata() {
+          db.collection("students").doc(this.editstd.id).set(this.editstd).then(() => {
+            this.dialog = false;
+            this.editmode = 0;
+          });
+        },
+        cancelEdit() {
+          this.dialog = false;
+          this.editmode = 0;
+        },
+        deleteData(student) {
+          if (confirm("ต้องการลบข้อมูลหรือไม่?")) {
+            db.collection("students").doc(student.id).delete();
+          }
+        },
+        addData() {
+          this.editstd = {};
+          this.editmode = "เพิ่มนักเรียน";
+          this.dialog = true;
+        },
+        google_login() {
+          const provider = new firebase.auth.GoogleAuthProvider();
+          provider.addScope("profile");
+          provider.addScope("email");
+          firebase.auth().signInWithPopup(provider);
+        },
+        google_logout() {
+          if (confirm("ต้องการออกจากระบบหรือไม่?")) {
+            firebase.auth().signOut();
+          }
+        }
+      }
+    });
+    app.use(vuetify).mount("#app");
+  </script>
+</body>
+
+</html>
